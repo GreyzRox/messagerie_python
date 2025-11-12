@@ -5,12 +5,14 @@ import re
 
 class Client() :
     
-    def __init__(self,username, server, port):
+    def __init__(self,username, server, port, ui = None):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((server, port))
         self.username = username
         self.send("USERNAME {0}".format(username))
         self.listening = True
+
+        self.ui = ui
 
     def listener(self) : 
         while self.listening:
@@ -46,6 +48,8 @@ class Client() :
         elif data=="":
             self.tidy_up()
         else:
+            if (self.ui):
+                self.ui(data)
             print(data)
 
 if __name__=="__main__":
