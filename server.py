@@ -2,6 +2,9 @@ import socket # API qui permet de communiquer via des sockets
 import sys # utilisé pour sortir du programme
 import time # Module pour faire des pauses (time.sleep)
 from clientthread import ClientListener
+import hashlib
+from bdd import DB
+
 
 class Server():
 
@@ -11,6 +14,15 @@ class Server():
         self.listener.listen(1)
         print("Listening on port ", port)
         self.clients_sockets=[]
+        self.cursor = DB()
+
+    def verif_password(self, pswd):
+        password = self.cursor.getServerPswd()
+        (a,) = password
+        if(pswd == a):
+            return True
+        else:
+            return False
 
     def run(self):
         while True:
@@ -36,6 +48,18 @@ class Server():
             except socket.error:
                 print("Cannot send the message")
 
+    def check_user_pswd(self, username, pswd):
+        user_id = self.cursor.getIdByUsername
+        user_pswd = self.cursor.getUserPswdById
+
+        print("print dans 'check_user_pswd' de server.py")
+        
+        if user_pswd == pswd:
+            return True
+        else:
+            return False
+
 if __name__ == "__main__":
+    pswd = hashlib.md5(b'' + input("mot de passe: ").encode()).hexdigest()
     server = Server(59001)
     server.run()

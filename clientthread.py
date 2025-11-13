@@ -14,6 +14,22 @@ class ClientListener(threading.Thread): # Classe pour gérer la communication av
         self.username = "No username"
 
     def run(self): # Méthode principale du thread, qui sert à écouter les messages du client
+        msg = ""
+        print("print avant d'avoir reçu le mdp")
+        try:
+            msg = self.socket.recv(1024).decode('UTF-8')
+            print(msg)
+            print("print apres avoir recu le mdp  du client")
+        except socket.error:
+            print("Unable to receive username and password data from client")
+            self.quit()
+        #    if not self.server.check_user_pswd(u, pswd):
+        #        self.socket.send('False'.encode('utf-8'))
+        #        self.quit()
+        #
+        self.quit()
+        # self.socket.send('True'.encode('utf-8'))
+
         while self.listening:
             data = ""
             try:
