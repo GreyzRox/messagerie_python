@@ -1,24 +1,24 @@
-import threading
-import socket
-import time
-import re
 import hashlib
+import re
+import socket
+import threading
+import time
 
-class Client():
-    
-    def __init__(self,username, server, port, ui = None):
+
+class Client:
+    def __init__(self, username, server, port, ui=None):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((server, port))
         self.username = username
-        self.send("USERNAME {0}".format(username))
+        # self.send("USERNAME {0}".format(username))
         self.listening = True
         self.ui = ui
-        
-    def listener(self) : 
+
+    def listener(self):
         while self.listening:
             data = ""
             try:
-                data= self.socket.recv(1024).decode('UTF-8')
+                data = self.socket.recv(1024).decode("UTF-8")
             except socket.error:
                 print("Unable to receive data")
             self.handle_msg(data)
@@ -31,9 +31,11 @@ class Client():
 
     def send(self, message):
         try:
-            username_result = re.search('^USERNAME (.*)$', message)
+            username_result = re.search("^USERNAME (.*)$", message)
             if not username_result:
-                message = "-------------\n{0}:\n\n{1}\n-------------".format(self.username, message)
+                message = "-------------\n{0}:\n\n{1}\n-------------".format(
+                    self.username, message
+                )
             self.socket.sendall(message.encode("UTF-8"))
         except socket.error:
             print("Unable to send message")
@@ -41,22 +43,23 @@ class Client():
     def verif_password_user(self, username, pswd):
         # faire en sorte que le client envoie le mdp au serveur pour vérif puis écoute la réponse
         toSend = username + " " + pswd
-        print("client: valeur qu'on envoie : "+toSend)
+        print("client: valeur qu'on envoie : " + toSend)
         try:
-            self.socket.send(toSend.encode('UTF-8'))
+            self.socket.send(toSend.encode("UTF-8"))
             print("yo. print dans verif_password_user de client.py apres l'envoie")
         except socket.error:
             print("Unable to send password to server.")
         return self.listen_for_pswd_answer()
 
     def listen_for_pswd_answer(self):
+        data = ""
         try:
             print("yo boi. print dans listen_for_pswd_answer de client.py")
-            data = self.socket.recv(1024).decode('UTF-8')
+            data = self.socket.recv(1024).decode("UTF-8")
             print("test")
         except socket.error:
             print("Unable to receive data")
-        if data == 'True':
+        if data == "True":
             return True
         else:
             return False
@@ -66,24 +69,25 @@ class Client():
         self.socket.close()
 
     def handle_msg(self, data):
-        if data=="QUIT":
+        if data == "QUIT":
             self.tidy_up()
-        elif data=="":
+        elif data == "":
             self.tidy_up()
         else:
-            if (self.ui):
+            if self.ui:
                 self.ui(data)
             print(data)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     username = input("username: ")
     server = input("server: ")
     port = int(input("port: "))
-    pswd = hashlib.md5(b'' + input("mot de passe: ").encode()).hexdigest()
+    pswd = hashlib.md5(b"" + input("mot de passe: ").encode()).hexdigest()
 
     client = Client(username=username, server=server, port=port)
 
-    if(client.verif_password_user(username, pswd)):
+    if client.verif_password_user(username, pswd):
         client.listen()
         message = ""
         while message != "QUIT":
@@ -92,4 +96,3 @@ if __name__=="__main__":
             # print("\033[A\033[A")
     else:
         print("Password not")
-    
