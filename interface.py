@@ -2,6 +2,7 @@ import hashlib
 import tkinter as tk
 from tkinter import scrolledtext, messagebox
 from client import Client
+from PIL import Image, ImageTk
 
 
 class ChatInterface:
@@ -11,6 +12,8 @@ class ChatInterface:
         self.root.state('zoomed')
         self.root.configure(bg="#1a1a1a")
         self.client = client
+        icon = tk.PhotoImage(file="interface.png")
+        self.root.iconphoto(True, icon)
 
         dark_bg = "#1a1a1a"
         orange = "#ffffff"

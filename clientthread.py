@@ -58,10 +58,11 @@ class ClientListener(threading.Thread):
         self.server.remove_socket(self.socket)
 
     def getMessages(self):
+        i = 0
         msg = self.server.cursor.getMessages()
-        while i <= msg.len()-1:
+        while i <= len(msg)-1:
             try:
-                self.socket.sent(msg)
+                self.socket.send(msg[i][0].encode("UTF-8"))
             except socket.error:
                 print("PROBLEME!!!!!!!")
                 self.quit()
