@@ -12,7 +12,7 @@ class ChatInterface:
         self.root.configure(bg="#1a1a1a")
 
         dark_bg = "#1a1a1a"
-        orange = "#ff8c42"
+        orange = "#ffffff"
         white = "#ffffff"
         input_bg = "#2d2d2d"
         sidebar_bg = "#242424"
@@ -97,9 +97,6 @@ class ChatInterface:
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
-    def create_client(self, username, server, port):
-        self.client = Client(username, server, port, self.display_message)
-        self.client.listen()
 
     def display_message(self, msg):
         self.text_area.config(state="normal")
@@ -159,26 +156,27 @@ class LoginInterface:
         if not username or not password or not server or not port_str:
             messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
             return
-        
+
         try:
             port = int(port_str)
         except ValueError:
             messagebox.showerror("Erreur", "Le port doit être un nombre entier")
             return
         
-        pswd_hash = hashlib.md5(b"" + password.encode()).hexdigest()
-        
+        pswd_hash = hashlib.md5(password.encode()).hexdigest()
+
         temp_client = Client(username, server, port)
-        
+
         if temp_client.verif_password_user(username, pswd_hash):
             self.root.destroy()
-            
-            chat_app = ChatInterface()
-            chat_app.create_client(username, server, port)
+
+            chat_app = ChatInterface(temp_client)
             chat_app.run()
+
         else:
             messagebox.showerror("Erreur", "Nom d'utilisateur ou mot de passe incorrect")
             temp_client.tidy_up()
+
 
 
     def destroy(self):

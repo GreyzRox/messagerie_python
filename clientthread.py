@@ -17,7 +17,7 @@ class ClientListener(threading.Thread):
 
     # Méthode principale du thread, qui sert à écouter les messages du client
     def run(self):
-
+        
         msg = ""
         tmp = ""
         while True:
@@ -32,6 +32,7 @@ class ClientListener(threading.Thread):
                 self.quit()
         
         login = msg.split()
+        self.username = login[0]
         if not self.server.check_user_pswd(login[0], login[1]):
             self.socket.send('False'.encode('utf-8'))
             self.quit()
@@ -69,5 +70,7 @@ class ClientListener(threading.Thread):
             self.quit()
         else: # Sinon, on renvoie le message à tous les clients
             user_id = self.server.cursor.getIdByUsername(self.username)
+            print(self.username)
+            print(user_id)
             self.server.cursor.insertMessageIntoDB(data,user_id)
             self.server.echo(data)

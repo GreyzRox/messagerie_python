@@ -19,7 +19,7 @@ class DB:
         return connection
 
     def getIdByUsername(self, user_name):
-        self.cur.execute("SELECT * FROM utilisateur WHERE username = %s;", (user_name,))
+        self.cur.execute("SELECT id FROM utilisateur WHERE username = %s;", (user_name,))
         return self.cur.fetchone()
     
     def GetAllMessage(self):
@@ -39,7 +39,7 @@ class DB:
         return self.cur.fetchone()
     
     def insertMessageIntoDB(self, message, user_id):
-        self.cur.execute("INSERT INTO message VALUES (message_id_seq.nextval(), %s, %s);", (message, user_id))
+        self.cur.execute("INSERT INTO message VALUES (nextval('message_id_seq'), %s, %s);", (message, user_id))
         self.connection.commit()
 
     def getMessages(self):

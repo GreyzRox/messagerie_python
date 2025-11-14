@@ -10,7 +10,7 @@ class Client:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((server, port))
         self.username = username
-        # self.send("USERNAME {0}".format(username))
+        #self.send("USERNAME {0}".format(username))
         self.listening = True
         self.ui = ui
 
@@ -33,7 +33,7 @@ class Client:
         try:
             username_result = re.search("^USERNAME (.*)$", message)
             if not username_result:
-                message = "-------------\n{0}:\n\n{1}\n-------------".format(
+                message = "{0}:{1}".format(
                     self.username, message
                 )
             self.socket.sendall(message.encode("UTF-8"))
