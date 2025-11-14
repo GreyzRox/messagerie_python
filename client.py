@@ -46,7 +46,6 @@ class Client:
         print("client: valeur qu'on envoie : " + toSend)
         try:
             self.socket.send(toSend.encode("UTF-8"))
-            print("yo. print dans verif_password_user de client.py apres l'envoie")
         except socket.error:
             print("Unable to send password to server.")
         return self.listen_for_pswd_answer()
@@ -54,9 +53,7 @@ class Client:
     def listen_for_pswd_answer(self):
         data = ""
         try:
-            print("yo boi. print dans listen_for_pswd_answer de client.py")
             data = self.socket.recv(1024).decode("UTF-8")
-            print("test")
         except socket.error:
             print("Unable to receive data")
         if data == "True":

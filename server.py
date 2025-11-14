@@ -66,4 +66,8 @@ class Server():
 if __name__ == "__main__":
     pswd = hashlib.md5(b'' + input("mot de passe: ").encode()).hexdigest()
     server = Server(59001)
-    server.run()
+    server_pswd = server.cursor.getServerPswd()
+    if pswd == server_pswd:
+        server.run()
+    else:
+        print("Wrong server password.")
