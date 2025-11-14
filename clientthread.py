@@ -82,7 +82,5 @@ class ClientListener(threading.Thread):
             self.quit()
         else: # Sinon, on renvoie le message à tous les clients
             user_id = self.server.cursor.getIdByUsername(self.username)
-            print(self.username)
-            print(user_id)
             self.server.cursor.insertMessageIntoDB(data,user_id)
-            self.server.echo(data)
+            self.server.echo(data + "\n")
