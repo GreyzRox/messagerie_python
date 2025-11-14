@@ -12,8 +12,7 @@ class ChatInterface:
         self.root.state('zoomed')
         self.root.configure(bg="#1a1a1a")
         self.client = client
-        icon = tk.PhotoImage(file="interface.png")
-        self.root.iconphoto(True, icon)
+        self.root.iconbitmap("logo_amber.ico")
 
         dark_bg = "#1a1a1a"
         orange = "#ffffff"
