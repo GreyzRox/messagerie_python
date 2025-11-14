@@ -35,6 +35,7 @@ class ClientListener(threading.Thread):
         if not self.server.check_user_pswd(login[0], login[1]):
             self.socket.send('False'.encode('utf-8'))
             self.quit()
+            return  # Arrête l'exécution du thread
         self.socket.send('True'.encode('utf-8'))
 
         while self.listening:

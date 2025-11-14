@@ -27,7 +27,7 @@ class DB:
         return self.cur.fetchall()
 
     def getUserPswdById(self, user_id):
-        self.cur.execute("SELECT password FROM utilisateur WHERE id = %s;", (user_id))
+        self.cur.execute("SELECT password FROM utilisateur WHERE id = %s;", (user_id,))
         return self.cur.fetchone()
     
     def createUser(self, user_name, password):

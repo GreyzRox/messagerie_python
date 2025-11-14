@@ -1,5 +1,6 @@
+import hashlib
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, messagebox
 from client import Client
 
 
@@ -7,26 +8,98 @@ class ChatInterface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Amber")
-        self.root.geometry("1080x720")
+        self.root.state('zoomed')
+        self.root.configure(bg="#1a1a1a")
 
-        # Zone des affichage des messages
-        self.text_area = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=150, height=20, state="disabled")
-        self.text_area.pack(padx=10, pady=10)
+        dark_bg = "#1a1a1a"
+        orange = "#ff8c42"
+        white = "#ffffff"
+        input_bg = "#2d2d2d"
+        sidebar_bg = "#242424"
 
-        # Zone pour entrer le message
-        self.entry = tk.Entry(self.root, width=100)
-        self.entry.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        main_frame = tk.Frame(self.root, bg=dark_bg)
+        main_frame = tk.Frame(self.root, bg=dark_bg)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Bouton envoyer
-        self.send_button = tk.Button(self.root, text="Envoyer", command=self.send_message)
-        self.send_button.pack(side=tk.LEFT, padx=10, pady=(0, 10))
+        self.text_area = scrolledtext.ScrolledText(
+            main_frame, 
+            wrap=tk.WORD, 
+            state="disabled",
+            bg=dark_bg,
+            fg=white,
+            insertbackground=orange,
+            selectbackground=orange,
+            selectforeground=dark_bg,
+            relief=tk.FLAT,
+            font=("Segoe UI", 10)
+        )
+        self.text_area.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
 
-        # Création du client
-        self.client = Client(self.username, self.server, self.port, self.display_message)
-        self.client.listen()
+        users_frame = tk.Frame(main_frame, width=220, bg=sidebar_bg)
+        users_frame.pack(side=tk.RIGHT, fill=tk.BOTH)
+        users_frame.pack_propagate(False)
 
-        # Gestion de la fermeture
+        tk.Label(
+            users_frame, 
+            text="Utilisateurs connectés", 
+            bg=sidebar_bg, 
+            fg=orange,
+            font=("Segoe UI", 12, "bold")
+        ).pack(pady=15)
+
+        self.users_listbox = tk.Listbox(
+            users_frame, 
+            bg=input_bg,
+            fg=white,
+            selectbackground=orange,
+            selectforeground=dark_bg,
+            relief=tk.FLAT,
+            font=("Segoe UI", 10),
+            highlightthickness=0
+        )
+        self.users_listbox.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+
+        example_users = ["Alice", "Bob", "Charlie", "David"]
+        for user in example_users:
+            self.users_listbox.insert(tk.END, user)
+
+        input_frame = tk.Frame(self.root, bg=dark_bg)
+        input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+
+        self.entry = tk.Entry(
+            input_frame,
+            bg=input_bg,
+            fg=white,
+            insertbackground=orange,
+            relief=tk.FLAT,
+            font=("Segoe UI", 11),
+            highlightthickness=1,
+            highlightbackground=orange,
+            highlightcolor=orange
+        )
+        self.entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8)
+
+        self.send_button = tk.Button(
+            input_frame, 
+            text="Envoyer",
+            command=self.send_message,
+            bg=orange,
+            fg=dark_bg,
+            activebackground="#ff6b1a",
+            activeforeground=white,
+            relief=tk.FLAT,
+            font=("Segoe UI", 10, "bold"),
+            cursor="hand2",
+            padx=20,
+            pady=8
+        )
+        self.send_button.pack(side=tk.RIGHT, padx=(10, 0))
+
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def create_client(self, username, server, port):
+        self.client = Client(username, server, port, self.display_message)
+        self.client.listen()
 
     def display_message(self, msg):
         self.text_area.config(state="normal")
@@ -55,26 +128,57 @@ class LoginInterface:
         self.root.geometry("420x150")
 
         tk.Label(self.root, text="Username:").grid(row=0, column=0)
-        self.user_entry = tk.Entry(self.root,width=50).grid(row=0, column=1)
+        self.user_entry = tk.Entry(self.root, width=50)
+        self.user_entry.grid(row=0, column=1)
 
         tk.Label(self.root, text="Password:").grid(row=1, column=0)
-        self.pswd_entry = tk.Entry(self.root, show="*", width=50).grid(row=1, column=1)
+        self.pswd_entry = tk.Entry(self.root, show="*", width=50)
+        self.pswd_entry.grid(row=1, column=1)
 
         tk.Label(self.root, text="Server:").grid(row=2, column=0)
-        self.server_entry = tk.Entry(self.root, width=50).grid(row=2, column=1)
+        self.server_entry = tk.Entry(self.root, width=50)
+        self.server_entry.grid(row=2, column=1)
 
         tk.Label(self.root, text="Server Password:").grid(row=3, column=0)
-        self.server_pswd_entry = tk.Entry(self.root, show="*", width=50).grid(row=3, column=1)
+        self.server_pswd_entry = tk.Entry(self.root, show="*", width=50)
+        self.server_pswd_entry.grid(row=3, column=1)
 
         tk.Label(self.root, text="Port:").grid(row=4, column=0)
-        self.port_entry = tk.Entry(self.root, width=50).grid(row=4, column=1)
+        self.port_entry = tk.Entry(self.root, width=50)
+        self.port_entry.grid(row=4, column=1)
 
-        self.login_button = tk.Button(self.root, text="Login")
+        self.login_button = tk.Button(self.root, text="Login", command=self.login)
         self.login_button.grid(row=5, column=1)
 
-        if self.login_button:
-            chatInterface = ChatInterface()
-            chatInterface.run()
+    def login(self):
+        username = self.user_entry.get()
+        password = self.pswd_entry.get()
+        server = self.server_entry.get()
+        port_str = self.port_entry.get()
+        
+        if not username or not password or not server or not port_str:
+            messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
+            return
+        
+        try:
+            port = int(port_str)
+        except ValueError:
+            messagebox.showerror("Erreur", "Le port doit être un nombre entier")
+            return
+        
+        pswd_hash = hashlib.md5(b"" + password.encode()).hexdigest()
+        
+        temp_client = Client(username, server, port)
+        
+        if temp_client.verif_password_user(username, pswd_hash):
+            self.root.destroy()
+            
+            chat_app = ChatInterface()
+            chat_app.create_client(username, server, port)
+            chat_app.run()
+        else:
+            messagebox.showerror("Erreur", "Nom d'utilisateur ou mot de passe incorrect")
+            temp_client.tidy_up()
 
 
     def destroy(self):
