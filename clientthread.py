@@ -38,7 +38,7 @@ class ClientListener(threading.Thread):
             self.quit()
             return  # Arrête l'exécution du thread
         self.socket.send('True'.encode('utf-8'))
-
+        self.getMessages()
         while self.listening:
             data = ""
             try:
@@ -57,6 +57,17 @@ class ClientListener(threading.Thread):
         self.socket.close()
         self.server.remove_socket(self.socket)
 
+    def getMessages(self):
+        msg = self.server.cursor.getMessages()
+        while i <= msg.len()-1:
+            try:
+                self.socket.sent(msg)
+            except socket.error:
+                print("PROBLEME!!!!!!!")
+                self.quit()
+            i += 1
+
+        
     # Méthode pour traiter les messages reçus
     def handle_msg(self, data):
         print(self.address, " sent :", data)

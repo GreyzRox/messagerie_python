@@ -43,5 +43,5 @@ class DB:
         self.connection.commit()
 
     def getMessages(self):
-        self.cur.execute("SELECT * FROM message;")
-        return self.cur.fetchone()
+        self.cur.execute("SELECT data FROM message;")
+        return self.cur.fetchall()
