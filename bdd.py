@@ -19,7 +19,7 @@ class DB:
         return connection
 
     def getIdByUsername(self, user_name):
-        self.cur.execute("SELECT * FROM utilisateur WHERE username = %s;", (user_name,))
+        self.cur.execute(f"SELECT id FROM utilisateur WHERE username = {user_name};")
         return self.cur.fetchone()
     
     def GetAllMessage(self):
@@ -27,7 +27,7 @@ class DB:
         return self.cur.fetchall()
 
     def getUserPswdById(self, user_id):
-        self.cur.execute("SELECT password FROM utilisateur WHERE id = %s;", (user_id))
+        self.cur.execute(f"SELECT password FROM utilisateur WHERE id = {user_id};")
         return self.cur.fetchone()
     
     def createUser(self, user_name, password):

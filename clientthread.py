@@ -3,9 +3,11 @@ import threading # Module pour gérer les threads
 import re # Module pour les expressions régulières
 import time # Module pour faire des pauses (time.sleep)
 
-class ClientListener(threading.Thread): # Classe pour gérer la communication avec un client
+# Classe pour gérer la communication avec un client
+class ClientListener(threading.Thread):
 
-    def __init__(self, server, socket, address): # Constructeur de la classe
+    # Constructeur de la classe
+    def __init__(self, server, socket, address):
         super(ClientListener, self).__init__()  # appel de la classe parent
         self.server = server 
         self.socket = socket
@@ -13,22 +15,35 @@ class ClientListener(threading.Thread): # Classe pour gérer la communication av
         self.listening = True
         self.username = "No username"
 
-    def run(self): # Méthode principale du thread, qui sert à écouter les messages du client
+    # Méthode principale du thread, qui sert à écouter les messages du client
+    def run(self):
+
         msg = ""
-        print("print avant d'avoir reçu le mdp")
-        try:
-            msg = self.socket.recv(1024).decode('UTF-8')
-            print(msg)
-            print("print apres avoir recu le mdp  du client")
-        except socket.error:
-            print("Unable to receive username and password data from client")
+        tmp = ""
+        while True:
+            try:
+                tmp = self.socket.recv(1024).decode('UTF-8')
+                print("tmp", tmp)
+                msg += tmp
+                if len(tmp) < 1024:
+                    print(f"Valeur de msg : {msg}")
+                    break
+            except socket.error:
+                print("Unable to receive username and password data from client")
+                self.quit()
+        
+        login = msg.split()
+        print("p1",login[0])
+        print("p2",login[1])
+        username = login[0]
+        pswd = login[1]
+
+        print(self.server.check_user_pswd(username,pswd))
+
+        if not self.server(login[0], login[1]):
+            self.socket.send('False'.encode('utf-8'))
             self.quit()
-        #    if not self.server.check_user_pswd(u, pswd):
-        #        self.socket.send('False'.encode('utf-8'))
-        #        self.quit()
-        #
-        self.quit()
-        # self.socket.send('True'.encode('utf-8'))
+        self.socket.send('True'.encode('utf-8'))
 
         while self.listening:
             data = ""
@@ -40,13 +55,15 @@ class ClientListener(threading.Thread): # Classe pour gérer la communication av
             time.sleep(0.1) # Petite pause pour éviter de surcharger le CPU
         print("Ending client thread for", self.address)
 
-    def quit(self): # Méthode pour gérer la déconnexion du client
+    # Méthode pour gérer la déconnexion du client
+    def quit(self):
         self.server.echo("{0} has quit \n".format(self.username))
         self.listening = False
         self.socket.close()
         self.server.remove_socket(self.socket)
 
-    def handle_msg(self, data): # Méthode pour traiter les messages reçus
+    # Méthode pour traiter les messages reçus
+    def handle_msg(self, data):
         print(self.address, " sent :", data)
         username_result = re.search(r"^USERNAME (.+)$", data) # Expression régulière pour extraire le nom d'utilisateur
         if username_result: # Si le message est un nom d'utilisateur
