@@ -75,6 +75,8 @@ class Client:
                 self.ui(data)
             print(data)
 
+    def traitement_user_liste(self):
+        
 
 if __name__ == "__main__":
     username = input("username: ")
