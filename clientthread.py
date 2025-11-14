@@ -38,6 +38,10 @@ class ClientListener(threading.Thread):
             self.quit()
             return  # Arrête l'exécution du thread
         self.socket.send('True'.encode('utf-8'))
+
+        self.server.liste_user.append(self.username)
+        self.server.send_user_all()
+        
         self.getMessages()
         while self.listening:
             data = ""

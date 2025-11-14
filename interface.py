@@ -9,11 +9,10 @@ class ChatInterface:
     def __init__(self,client):
         self.root = tk.Tk()
         self.root.title("Amber")
-        self.root.state('zoomed')
+        self.root.iconbitmap("logo_amber.ico")
         self.root.configure(bg="#1a1a1a")
         self.client = client
-        icon = tk.PhotoImage(file="interface.png")
-        self.root.iconphoto(True, icon)
+        self.root.state('zoomed')
 
         dark_bg = "#1a1a1a"
         orange = "#ffffff"

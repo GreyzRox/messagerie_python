@@ -6,6 +6,7 @@ import hashlib
 from bdd import DB
 
 
+
 class Server():
 
     def __init__(self, port): # Constructeur de la class 'Server'
@@ -15,6 +16,7 @@ class Server():
         print("Listening on port ", port)
         self.clients_sockets=[]
         self.cursor = DB()
+        self.liste_user = []
 
     def verif_password(self, pswd):
         password = self.cursor.getServerPswd()
@@ -62,6 +64,14 @@ class Server():
             return True
         else:
             return False
+        
+    def send_user_all(self):
+        for sock in self.clients_sockets:
+            for usr in self.liste_user:
+                try:
+                    sock.sendall(usr.encode("UTF-8") + b"\n")
+                except socket.error:
+                    print("Cannot send the message")
 
 if __name__ == "__main__":
     pswd = hashlib.md5(b'' + input("mot de passe: ").encode()).hexdigest()
