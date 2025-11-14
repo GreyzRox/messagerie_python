@@ -111,7 +111,7 @@ class ChatInterface:
         # Gestion de la fermeture de la fenêtre
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
-
+    # fonction pour afficher les messages dans la zone de texte
     def display_message(self, msg):
         self.text_area.config(state="normal")
         self.text_area.insert(tk.END, msg + "\n")
@@ -119,73 +119,93 @@ class ChatInterface:
         self.text_area.config(state="disabled")
         self.text_area.config(fg="#ffffff")
 
+    # fonction pour envoyer les messages
     def send_message(self):
         msg = self.entry.get()
         if msg:
             self.client.send(msg)
             self.entry.delete(0, tk.END)
 
+    # gestion de la fermeture de la fenetre
     def on_close(self):
         self.client.send("QUIT")
         self.client.tidy_up()
         self.root.destroy()
 
+    # fonction pour lancer la boucle principale de l'interface
     def run(self):
         self.root.mainloop()
 
+# Classe de la fenetre de login
 class LoginInterface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Login")
         self.root.geometry("420x150")
 
+        # Création des champs de saisie
+        # Champ user
         tk.Label(self.root, text="Username:").grid(row=0, column=0)
         self.user_entry = tk.Entry(self.root, width=50)
         self.user_entry.grid(row=0, column=1)
 
+        #champ password
         tk.Label(self.root, text="Password:").grid(row=1, column=0)
         self.pswd_entry = tk.Entry(self.root, show="*", width=50)
         self.pswd_entry.grid(row=1, column=1)
 
+        #champ server
         tk.Label(self.root, text="Server:").grid(row=2, column=0)
         self.server_entry = tk.Entry(self.root, width=50)
         self.server_entry.grid(row=2, column=1)
 
+        #champ pswd
         tk.Label(self.root, text="Server Password:").grid(row=3, column=0)
         self.server_pswd_entry = tk.Entry(self.root, show="*", width=50)
         self.server_pswd_entry.grid(row=3, column=1)
 
+        #champ port
         tk.Label(self.root, text="Port:").grid(row=4, column=0)
         self.port_entry = tk.Entry(self.root, width=50)
         self.port_entry.grid(row=4, column=1)
 
+        #bouton de login
         self.login_button = tk.Button(self.root, text="Login", command=self.login)
+        #raccourci clavier 'Entrée' pour le login
         self.port_entry.bind("<Return>", lambda event: self.login())
         self.login_button.grid(row=5, column=1)
 
+    # fonction de login 
     def login(self):
+        #stockage des valeurs ecrit dans le champs
         username = self.user_entry.get()
         password = self.pswd_entry.get()
         server = self.server_entry.get()
         port_str = self.port_entry.get()
         
+        #verification que tous les champs sont remplis
         if not username or not password or not server or not port_str:
             messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
             return
 
         try:
+            #conversion du port en entier et verification que le port est bien un int
             port = int(port_str)
         except ValueError:
             messagebox.showerror("Erreur", "Le port doit être un nombre entier")
             return
         
+        #hachage du mot de passe avec md5
         pswd_hash = hashlib.md5(password.encode()).hexdigest()
 
+        # Crée une connexion socket vers le serveur
         temp_client = Client(username, server, port)
 
+        #verification du mot de passe avec le serveur
         if temp_client.verif_password_user(username, pswd_hash):
-            self.root.destroy()
+            self.root.destroy() #Ferme la fenêtre de login si le mdp est correct
 
+            # On lance l'interface de chat
             chat_app = ChatInterface(temp_client)
             chat_app.client = temp_client
             chat_app.client.ui = chat_app.display_message
@@ -193,6 +213,7 @@ class LoginInterface:
             chat_app.run()
 
         else:
+            #msg d'erreur sinon
             messagebox.showerror("Erreur", "Nom d'utilisateur ou mot de passe incorrect")
             temp_client.tidy_up()
 
