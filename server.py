@@ -56,10 +56,7 @@ class Server():
             return False
         
         user_id = user_data[0]
-        user_pswd_result = self.cursor.getUserPswdById(user_id)
-
-        print("print dans 'check_user_pswd' de server.py")
-        
+        user_pswd_result = self.cursor.getUserPswdById(user_id)        
         if user_pswd_result and user_pswd_result[0] == pswd:
             return True
         else:
