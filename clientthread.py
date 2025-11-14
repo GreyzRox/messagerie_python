@@ -42,6 +42,7 @@ class ClientListener(threading.Thread):
             data = ""
             try:
                 data = self.socket.recv(1024).decode('utf-8')
+
             except socket.error: # Gestion des erreurs de réception
                 print("Unable to receive data")
             self.handle_msg(data)
@@ -67,4 +68,6 @@ class ClientListener(threading.Thread):
         elif data == "": # Si le message est vide, on considère que le client s'est déconnecté
             self.quit()
         else: # Sinon, on renvoie le message à tous les clients
+            user_id = self.server.cursor.getIdByUsername(self.username)
+            self.server.cursor.insertMessageIntoDB(data,user_id)
             self.server.echo(data)

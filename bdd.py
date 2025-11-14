@@ -31,9 +31,17 @@ class DB:
         return self.cur.fetchone()
     
     def createUser(self, user_name, password):
-        self.cur.execute("INSERT INTO utilisateur (user_id_seq.nextval(),username, password) VALUES (%s, %s);", (user_name, password))
+        self.cur.execute("INSERT INTO utilisateur VALUES (user_id_seq.nextval(), %s, %s);", (user_name, password))
         self.connection.commit()
 
     def getServerPswd(self):
         self.cur.execute("SELECT password FROM server;")
+        return self.cur.fetchone()
+    
+    def insertMessageIntoDB(self, message, user_id):
+        self.cur.execute("INSERT INTO message VALUES (message_id_seq.nextval(), %s, %s);", (message, user_id))
+        self.connection.commit()
+
+    def getMessages(self):
+        self.cur.execute("SELECT * FROM message;")
         return self.cur.fetchone()
