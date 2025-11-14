@@ -17,31 +17,28 @@ class DB:
             port = dotenv_values(".env")["DB_PORT"],
         )
         return connection
-
-    def getIdByUsername(self, user_name):
+    
+#Fonction qui permet de récupérer le nom d'utilisateur avec l'Id
+    def getIdByUsername(self, user_name): 
         self.cur.execute("SELECT id FROM utilisateur WHERE username = %s;", (user_name,))
         return self.cur.fetchone()
     
-    def GetAllMessage(self):
-        self.cur.execute("SELECT data,user_id FROM message;")
-        return self.cur.fetchall()
-
+#Fonction qui permet de récupérer le mot de passe avec l'Id
     def getUserPswdById(self, user_id):
         self.cur.execute("SELECT password FROM utilisateur WHERE id = %s;", (user_id,))
         return self.cur.fetchone()
     
-    def createUser(self, user_name, password):
-        self.cur.execute("INSERT INTO utilisateur VALUES (user_id_seq.nextval(), %s, %s);", (user_name, password))
-        self.connection.commit()
-
-    def getServerPswd(self):
+#Fonction qui permet de récupérer le mot de passe du serveur
+    def getServerPswd(self): 
         self.cur.execute("SELECT password FROM server;")
         return self.cur.fetchone()
     
-    def insertMessageIntoDB(self, message, user_id):
+    #Fonction qui permet d'insérer les messages dans la BD
+    def insertMessageIntoDB(self, message, user_id): 
         self.cur.execute("INSERT INTO message VALUES (nextval('message_id_seq'), %s, %s);", (message, user_id))
         self.connection.commit()
-
-    def getMessages(self):
+        
+#Fonction qui permet de récupérer tous les messages
+    def getMessages(self): 
         self.cur.execute("SELECT data FROM message;")
         return self.cur.fetchall()
