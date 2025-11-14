@@ -62,7 +62,8 @@ class ClientListener(threading.Thread):
         msg = self.server.cursor.getMessages()
         while i <= len(msg)-1:
             try:
-                self.socket.send(msg[i][0].encode("UTF-8"))
+                data = (msg[i][0] + "\n").encode("UTF-8")
+                self.socket.send(data)
             except socket.error:
                 print("PROBLEME!!!!!!!")
                 self.quit()
