@@ -5,17 +5,19 @@ from client import Client
 
 
 class ChatInterface:
-    def __init__(self):
+    def __init__(self,client):
         self.root = tk.Tk()
         self.root.title("Amber")
         self.root.state('zoomed')
         self.root.configure(bg="#1a1a1a")
+        self.client = client
 
         dark_bg = "#1a1a1a"
         orange = "#ffffff"
         white = "#ffffff"
         input_bg = "#2d2d2d"
         sidebar_bg = "#242424"
+        text_color_message = "#ffffff"
 
         main_frame = tk.Frame(self.root, bg=dark_bg)
         main_frame = tk.Frame(self.root, bg=dark_bg)
@@ -103,6 +105,7 @@ class ChatInterface:
         self.text_area.insert(tk.END, msg + "\n")
         self.text_area.yview(tk.END)
         self.text_area.config(state="disabled")
+        self.text_area.config(fg="#ffffff")
 
     def send_message(self):
         msg = self.entry.get()
@@ -171,6 +174,9 @@ class LoginInterface:
             self.root.destroy()
 
             chat_app = ChatInterface(temp_client)
+            chat_app.client = temp_client
+            chat_app.client.ui = chat_app.display_message
+            chat_app.client.listen()
             chat_app.run()
 
         else:
