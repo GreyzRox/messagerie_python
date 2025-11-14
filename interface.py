@@ -6,56 +6,60 @@ from PIL import Image, ImageTk
 
 
 class ChatInterface:
-    def __init__(self,client):
+    #constructeur
+    def __init__(self,client): 
         self.root = tk.Tk()
-        self.root.title("Amber")
-        self.root.iconbitmap("logo_amber.ico")
-        self.root.configure(bg="#1a1a1a")
-        self.client = client
-        self.root.state('zoomed')
+        self.root.title("Amber") #titre
+        self.root.iconbitmap("logo_amber.ico") #icone
+        self.root.configure(bg="#1a1a1a") #couleur du fond
+        self.client = client #association du client
+        self.root.state('zoomed') #fenetre en plein ecran
 
+        # bibliotheque de couleurs
         dark_bg = "#1a1a1a"
-        orange = "#ffffff"
         white = "#ffffff"
         input_bg = "#2d2d2d"
         sidebar_bg = "#242424"
-        text_color_message = "#ffffff"
 
-        main_frame = tk.Frame(self.root, bg=dark_bg)
+        #creation de la fenetre de reception de message
         main_frame = tk.Frame(self.root, bg=dark_bg)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
+        # Modification de la fenetre de texte pour afficher les messages
         self.text_area = scrolledtext.ScrolledText(
             main_frame, 
             wrap=tk.WORD, 
             state="disabled",
             bg=dark_bg,
             fg=white,
-            insertbackground=orange,
-            selectbackground=orange,
+            insertbackground=white,
+            selectbackground=white,
             selectforeground=dark_bg,
             relief=tk.FLAT,
             font=("Segoe UI", 10)
         )
         self.text_area.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
 
+        # creation fenetre d'utilisateur connectés
         users_frame = tk.Frame(main_frame, width=220, bg=sidebar_bg)
         users_frame.pack(side=tk.RIGHT, fill=tk.BOTH)
         users_frame.pack_propagate(False)
 
+        #modification fenetre utilisateur connectés
         tk.Label(
             users_frame, 
             text="Utilisateurs connectés", 
             bg=sidebar_bg, 
-            fg=orange,
+            fg=white,
             font=("Segoe UI", 12, "bold")
         ).pack(pady=15)
 
+        # Liste des utilisateurs connectés
         self.users_listbox = tk.Listbox(
             users_frame, 
             bg=input_bg,
             fg=white,
-            selectbackground=orange,
+            selectbackground=white,
             selectforeground=dark_bg,
             relief=tk.FLAT,
             font=("Segoe UI", 10),
@@ -63,31 +67,35 @@ class ChatInterface:
         )
         self.users_listbox.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
 
+        # Exemple d'utilisateurs connectés (à remplacer par les utilisateurs réels)
         example_users = ["Alice", "Bob", "Charlie", "David"]
         for user in example_users:
             self.users_listbox.insert(tk.END, user)
 
+        # Frame pour l'entrée de message et le bouton d'envoi
         input_frame = tk.Frame(self.root, bg=dark_bg)
         input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
 
+        # Modification de l'entrée de message
         self.entry = tk.Entry(
             input_frame,
             bg=input_bg,
             fg=white,
-            insertbackground=orange,
+            insertbackground=white,
             relief=tk.FLAT,
             font=("Segoe UI", 11),
             highlightthickness=1,
-            highlightbackground=orange,
-            highlightcolor=orange
+            highlightbackground=white,
+            highlightcolor=white
         )
         self.entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8)
 
+        #modification du bouton d'envoi
         self.send_button = tk.Button(
             input_frame, 
             text="Envoyer",
             command=self.send_message,
-            bg=orange,
+            bg=white,
             fg=dark_bg,
             activebackground="#ff6b1a",
             activeforeground=white,
@@ -98,7 +106,9 @@ class ChatInterface:
             pady=8
         )
         self.send_button.pack(side=tk.RIGHT, padx=(10, 0))
+        self.entry.bind("<Return>", lambda event: self.send_message())
 
+        # Gestion de la fermeture de la fenêtre
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
 
@@ -150,6 +160,7 @@ class LoginInterface:
         self.port_entry.grid(row=4, column=1)
 
         self.login_button = tk.Button(self.root, text="Login", command=self.login)
+        self.port_entry.bind("<Return>", lambda event: self.login())
         self.login_button.grid(row=5, column=1)
 
     def login(self):
